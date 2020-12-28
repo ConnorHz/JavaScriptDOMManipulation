@@ -37,8 +37,6 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
-
-
 function fillTable(data) {
     debugLog("begin fill");
 
@@ -95,6 +93,22 @@ function filterTable() {
     debugLog("end filter");
 }
 
+function resetFilter() {
+    var dates = tableData.map(row => {
+        return new Date(row.datetime);
+    });
+
+    var minDate = formatDate(Math.min.apply(null,dates));
+    var maxDate = formatDate(Math.max.apply(null,dates));
+
+    debugLog(minDate);
+
+    d3.select("#startDate").attr("value", minDate);
+    d3.select("#endDate").attr("value", maxDate);
+
+    fillTable(tableData);
+}
+
 var dates = tableData.map(row => {
     return new Date(row.datetime);
 });
@@ -123,6 +137,7 @@ var minDate = formatDate(Math.min.apply(null,dates));
 var maxDate = formatDate(Math.max.apply(null,dates));
 
 d3.select("#filter-btn").on("click", filterTable);
+d3.select("#reset-filter").on("click", resetFilter);
 
 d3.select("#startDate").attr("value", minDate);
 d3.select("#endDate").attr("value", maxDate);
