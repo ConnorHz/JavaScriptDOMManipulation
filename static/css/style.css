@@ -138,6 +138,10 @@ select {
   color: #8e979f;
 }
 
+.no-data {
+  text-align: center;
+}
+
 /* media queries which will only be activated at specific screen sizes */
 @media (max-width: 800px) {
   #table-area td {
