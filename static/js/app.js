@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 var tableData = data;
 
 function debugLog(message) {
@@ -94,28 +94,24 @@ function filterTable() {
 }
 
 function resetFilter() {
-    var dates = tableData.map(row => {
-        return new Date(row.datetime);
-    });
+    debugLog("begin reset filter");
+
+    var dates = tableData.map(row => new Date(row.datetime));
 
     var minDate = formatDate(Math.min.apply(null,dates));
     var maxDate = formatDate(Math.max.apply(null,dates));
 
-    debugLog(minDate);
+    document.getElementById("startDate").value = minDate;
+    document.getElementById("endDate").value = maxDate;
 
-    d3.select("#startDate").attr("value", minDate);
-    d3.select("#endDate").attr("value", maxDate);
+    d3.select('#city-filter').property('value', 'default');
+    d3.select('#state-filter').property('value', 'default');
 
     fillTable(tableData);
+    debugLog("end reset filter");
 }
 
-var dates = tableData.map(row => {
-    return new Date(row.datetime);
-});
-
-var cities = tableData.map(row => {
-    return titleCase(row.city);
-}).filter(onlyUnique).sort();
+var cities = tableData.map(row => titleCase(row.city)).filter(onlyUnique).sort();
 
 cities.forEach(city => {
     var newOption = d3.select("#city-filter").append("option");
@@ -123,9 +119,7 @@ cities.forEach(city => {
     newOption.attr("value", city.toLowerCase());
 });
 
-var states = tableData.map(row => {
-    return row.state.toUpperCase();
-}).filter(onlyUnique).sort();
+var states = tableData.map(row => row.state.toUpperCase()).filter(onlyUnique).sort();
 
 states.forEach(state => {
     var newOption = d3.select("#state-filter").append("option");
@@ -133,13 +127,7 @@ states.forEach(state => {
     newOption.attr("value", state.toLowerCase());
 });
 
-var minDate = formatDate(Math.min.apply(null,dates));
-var maxDate = formatDate(Math.max.apply(null,dates));
-
 d3.select("#filter-btn").on("click", filterTable);
 d3.select("#reset-filter").on("click", resetFilter);
 
-d3.select("#startDate").attr("value", minDate);
-d3.select("#endDate").attr("value", maxDate);
-
-fillTable(tableData);
+resetFilter();
