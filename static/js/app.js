@@ -79,13 +79,23 @@ function filterTable() {
     var stateFilter = document.getElementById('state-filter')
     var state = stateFilter.options[stateFilter.selectedIndex].value;
 
+    var countryFilter = document.getElementById('country-filter')
+    var country = countryFilter.options[countryFilter.selectedIndex].value;
+
+    var shapeFilter = document.getElementById('shape-filter')
+    var shape = shapeFilter.options[shapeFilter.selectedIndex].value;
+
     debugLog(`Start Date: ${startDate}`);
     debugLog(`End Date: ${endDate}`);
     debugLog(`City: ${city}`);
 
     var filteredData = tableData.filter(row => {
         var d = new Date(row.datetime);
-        return (d >= startDate && d <= endDate) && (city == "default" | row.city == city) && (state == "default" | row.state == state);
+        return (d >= startDate && d <= endDate) &&
+               (city == "default" | row.city == city) &&
+               (state == "default" | row.state == state) &&
+               (country == "default" | row.country == country) &&
+               (shape == "default" | row.shape == shape);
     });
 
     fillTable(filteredData);
@@ -104,8 +114,7 @@ function resetFilter() {
     document.getElementById("startDate").value = minDate;
     document.getElementById("endDate").value = maxDate;
 
-    d3.select('#city-filter').property('value', 'default');
-    d3.select('#state-filter').property('value', 'default');
+    d3.selectAll('select').property('value', 'default');
 
     fillTable(tableData);
     debugLog("end reset filter");
@@ -125,6 +134,22 @@ states.forEach(state => {
     var newOption = d3.select("#state-filter").append("option");
     newOption.text(state);
     newOption.attr("value", state.toLowerCase());
+});
+
+var countries = tableData.map(row => row.country.toUpperCase()).filter(onlyUnique).sort();
+
+countries.forEach(country => {
+    var newOption = d3.select("#country-filter").append("option");
+    newOption.text(country);
+    newOption.attr("value", country.toLowerCase());
+});
+
+var shapes = tableData.map(row => titleCase(row.shape)).filter(onlyUnique).sort();
+
+shapes.forEach(shape => {
+    var newOption = d3.select("#shape-filter").append("option");
+    newOption.text(shape);
+    newOption.attr("value", shape.toLowerCase());
 });
 
 d3.select("#filter-btn").on("click", filterTable);
